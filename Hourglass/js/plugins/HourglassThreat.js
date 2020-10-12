@@ -24,7 +24,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     Hourglass.Threat.setup = Game_Actor.prototype.setup;
     Game_Actor.prototype.setup = function(actorId) {
         Hourglass.Threat.setup.call(this, actorId);
-        var actor = this.actor();
+        let actor = this.actor();
         //TODO: additional calculation needed for balance
         this._threat = this._level*100*this.tgr;
     };
@@ -37,6 +37,7 @@ Hourglass.Threat = Hourglass.Threat || {};
         if (this.threatPercentage() < 99) {
             this._threat += (Math.abs(value) * this.tgr);
         }
+        console.log(this._threat);
     };
 
     Game_Actor.prototype.removeThreat = function(value) {
@@ -73,7 +74,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     Game_Action.prototype.itemEffectRecoverHp = function(target, effect) {
         Hourglass.Threat.itemEffectRecoverHp.call(this, target, effect);
 
-        var value = (target.mhp * effect.value1 + effect.value2);
+        let value = (target.mhp * effect.value1 + effect.value2);
         if (this.isItem()) {
             value *= this.subject().pha;
         }
@@ -99,7 +100,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     Hourglass.Threat.apply = Game_Action.prototype.apply;
     Game_Action.prototype.apply = function(target) {
         Hourglass.Threat.apply.call(this, target);
-        var result = target.result();
+        let result = target.result();
         if (result.evaded === true && target.isActor()) {
             //TODO: if subject has aggro profile 'Ego', add threat
             target.removeThreat(target._level * 50)
@@ -118,8 +119,8 @@ Hourglass.Threat = Hourglass.Threat || {};
 
     //TODO: seperate random friendly unit from random enemy. (Heal random ally shouldnt take threat into account)
     Game_Party.prototype.randomTarget = function() {
-        var threatRand = Math.random() * this.threatSum();
-        var target = null;
+        let threatRand = Math.random() * this.threatSum();
+        let target = null;
         this.aliveMembers().forEach(function(member) {
             threatRand -= member.threat();
             if (threatRand <= 0 && !target) {

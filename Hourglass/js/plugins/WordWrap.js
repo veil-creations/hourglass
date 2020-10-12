@@ -3,6 +3,7 @@
 //=============================================================================
 
 /*:
+ * @target MZ
  * @plugindesc "Show Text" Word Wrapping
  * @author Lene
  *
@@ -24,10 +25,10 @@ VividXP.WordWrap.WordWrapStyle = String(
 
 (() => {
 
-   var _Window_Base_processCharacter = Window_Base.prototype.processCharacter;
-   var _Window_Base_processDrawIcon = Window_Base.prototype.processDrawIcon;
-   var _Window_Message_initMembers = Window_Message.prototype.initMembers;
-   var _Window_Base_processNewLine  = Window_Base.prototype.processNewLine;
+   let _Window_Base_processCharacter = Window_Base.prototype.processCharacter;
+   let _Window_Base_processDrawIcon = Window_Base.prototype.processDrawIcon;
+   let _Window_Message_initMembers = Window_Message.prototype.initMembers;
+   let _Window_Base_processNewLine  = Window_Base.prototype.processNewLine;
 
    Window_Message.prototype.initMembers = function() {
        this._processWordWrapBreak = false;
@@ -69,9 +70,9 @@ VividXP.WordWrap.WordWrapStyle = String(
     * full message
     */
    Window_Message.prototype.getWordBoundaries = function(textStateText) {
-       var result = [];
-       var wordRegex = /\b[\S]+\b\S*/gm;
-       var wordBoundaryArr = [];
+       let result = [];
+       let wordRegex = /\b[\S]+\b\S*/gm;
+       let wordBoundaryArr = [];
        while ((wordBoundaryArr = wordRegex.exec(textStateText)) !== null) {
            result.push(wordBoundaryArr);
        }
@@ -144,8 +145,8 @@ VividXP.WordWrap.WordWrapStyle = String(
     * textState - contains information related to the message
     */
    Window_Message.prototype.processDrawIcon = function(iconIndex, textState) {
-       var maxWindowWidth = this.contents.width;
-       var iconWidth = Window_Base._iconWidth + 4;
+       let maxWindowWidth = this.contents.width;
+       let iconWidth = Window_Base._iconWidth + 4;
        if ( textState.x >= maxWindowWidth || textState.x + iconWidth >= maxWindowWidth  ) {
            this.wrapToNewLine(textState);
        }
@@ -175,21 +176,21 @@ VividXP.WordWrap.WordWrapStyle = String(
     * textState - contains information related to the message
     */
    Window_Message.prototype.processOverflow = function(textState) {
-       var maxWindowWidth = this.contents.width;
-       var w;
+       let maxWindowWidth = this.contents.width;
+       let w;
        switch (VividXP.WordWrap.WordWrapStyle) {
            case 'break-word':
-               var lastBoundaryIndex = textState.wordBoundaries[textState.wordBoundaries.length - 1];
-               var boundaryStartIndex = textState.wordBoundaries.lastIndexOf(textState.index);
+               let lastBoundaryIndex = textState.wordBoundaries[textState.wordBoundaries.length - 1];
+               let boundaryStartIndex = textState.wordBoundaries.lastIndexOf(textState.index);
                if (boundaryStartIndex !== -1) {
-                   var boundaryEndIndex;
+                   let boundaryEndIndex;
                    if ( textState.wordBoundaries[boundaryStartIndex] === lastBoundaryIndex ){
                        boundaryEndIndex = textState.text.length - 1;
                    } else {
                        boundaryEndIndex = textState.wordBoundaries[boundaryStartIndex + 1] - 1;
                    }
                    boundaryStartIndex = textState.wordBoundaries[boundaryStartIndex];
-                   var word = textState.text.substring(boundaryStartIndex, boundaryEndIndex);
+                   let word = textState.text.substring(boundaryStartIndex, boundaryEndIndex);
                    w = this.textWidth(word);
                    if ( textState.x >= maxWindowWidth || textState.x + w >= maxWindowWidth ){
                        this.wrapToNewLine(textState);
@@ -199,7 +200,7 @@ VividXP.WordWrap.WordWrapStyle = String(
                break;
            case 'break-all':
            default:
-               var c = textState.text[textState.index];
+               let c = textState.text[textState.index];
                w = this.textWidth(c);
                if ( textState.x >= maxWindowWidth || textState.x + (w * 2) >= maxWindowWidth ){
                    this.wrapToNewLine(textState);
