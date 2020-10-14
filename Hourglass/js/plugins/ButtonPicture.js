@@ -13,8 +13,8 @@
  * clicked.
  *
  * Use it in the following procedure.
- *   1. Execute "Show Picture" to display your button image.
- *   2. Call the plugin command "Set Button Picture".
+ *   1. Execute 'Show Picture' to display your button image.
+ *   2. Call the plugin command 'Set Button Picture'.
  *
  * @command set
  * @text Set Button Picture
@@ -69,9 +69,9 @@
  */
 
 (() => {
-    const pluginName = "ButtonPicture";
+    const pluginName = 'ButtonPicture';
 
-    PluginManager.registerCommand(pluginName, "set", args => {
+    PluginManager.registerCommand(pluginName, 'set', args => {
         const pictureId = Number(args.pictureId);
         const commonEventId = Number(args.commonEventId);
         const picture = $gameScreen.picture(pictureId);
@@ -90,17 +90,13 @@
     };
 
     Spriteset_Base.prototype.mzkp_isAnyPicturePressed = function() {
-        return this._pictureContainer.children.some(sprite =>
-            sprite.isPressed()
-        );
+        return this._pictureContainer.children.some(sprite => sprite.isPressed());
     };
 
-    const _Scene_Map_isAnyButtonPressed =
-        Scene_Map.prototype.isAnyButtonPressed;
+    const _Scene_Map_isAnyButtonPressed = Scene_Map.prototype.isAnyButtonPressed;
     Scene_Map.prototype.isAnyButtonPressed = function() {
         return (
-            _Scene_Map_isAnyButtonPressed.apply(this, arguments) ||
-            this._spriteset.mzkp_isAnyPicturePressed()
+            _Scene_Map_isAnyButtonPressed.apply(this, arguments) || this._spriteset.mzkp_isAnyPicturePressed()
         );
     };
 })();

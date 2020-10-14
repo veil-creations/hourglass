@@ -1,15 +1,22 @@
 //=============================================================================
-// VividXP_WordWrap.js
+// RPG Maker MZ - Word Wrap
 //=============================================================================
+const WordWrap = {};
+WordWrap.Parameters = PluginManager.parameters('WordWrap');
+WordWrap.WordWrapStyle = String(
+    WordWrap.Parameters['Word Wrap Style']
+);
 
 /*:
  * @target MZ
- * @plugindesc "Show Text" Word Wrapping
+ * @plugindesc Automatically wraps overflowing text.
  * @author Lene
  *
- * @help Using this plugin is easy! Just enter your dialog in the message
- * window and watch it wrap around. May not work for all languages.
- * 
+ * @help WordWrap.js
+ *
+ * Using this plugin is easy! Just enter your dialog in the message window and
+ * watch it wrap around. May not work for all languages.
+ *
  * It does not provide plugin commands.
  *
  * @param Word Wrap Style
@@ -17,18 +24,11 @@
  * @default break-word
  */
 
-const VividXP = VividXP || {};
-VividXP.WordWrap = {};
-VividXP.WordWrap.Parameters = PluginManager.parameters('VividXP_WordWrap');
-VividXP.WordWrap.WordWrapStyle = String(
-    VividXP.WordWrap.Parameters['Word Wrap Style']
-);
-
 (() => {
     const _Window_Base_processCharacter = Window_Base.prototype.processCharacter;
     const _Window_Base_processDrawIcon = Window_Base.prototype.processDrawIcon;
     const _Window_Message_initMembers = Window_Message.prototype.initMembers;
-    const _Window_Base_processNewLine  = Window_Base.prototype.processNewLine;
+    const _Window_Base_processNewLine = Window_Base.prototype.processNewLine;
 
     Window_Message.prototype.initMembers = function() {
         this._processWordWrapBreak = false;
@@ -53,12 +53,11 @@ VividXP.WordWrap.WordWrapStyle = String(
                 this.onEndOfText();
             }
             return true;
-        } else {
-            return false;
         }
+        return false;
     };
 
-    /*:
+    /*
      * getWordBoundaries
      * Takes the current message and does regex processing to retrieve the
      * index of the beginning of all words. Since this is JavaScript,
@@ -70,17 +69,15 @@ VividXP.WordWrap.WordWrapStyle = String(
     Window_Message.prototype.getWordBoundaries = function(textStateText) {
         let result = [];
         const wordRegex = /\b[\S]+\b\S*/gm;
-        const wordBoundaryArr = [];
-        while ((wordBoundaryArr = wordRegex.exec(textStateText)) !== null) {
+        const wordBoundaryArr = wordRegex.exec(textStateText);
+        while (wordBoundaryArr !== null) {
             result.push(wordBoundaryArr);
         }
-        result = result.map(match => {
-            return match.index;
-        });
+        result = result.map(match => (match.index));
         return result;
     };
 
-    /*:
+    /*
      * startMessage
      * Overwrites Window_Message.prototype.startMessage to call
      * getWordBoundaries after escaping the text and before displaying the
@@ -113,7 +110,7 @@ VividXP.WordWrap.WordWrapStyle = String(
         textState.height = this.calcTextHeight(textState, false);
     };
 
-    /*:
+    /*
      * processNormalCharacter
      * Check if word-wrapping needs to take place
      * textState - contains information related to the message
@@ -131,7 +128,7 @@ VividXP.WordWrap.WordWrapStyle = String(
         }
     };
 
-    /*:
+    /*
      * processDrawIcon
      * Check if word-wrapping for icons needs to take place. Since icons are
      * images, we don't need to check the WordWrapStyle setting. We just move
@@ -148,7 +145,7 @@ VividXP.WordWrap.WordWrapStyle = String(
         _Window_Base_processDrawIcon.call(this, iconIndex, textState);
     };
 
-    /*:
+    /*
      * processNewLine
      * Overrides Window_Base.prototype.processNewLine
      * We have to make sure to check if a new line has pushed content off the
@@ -163,7 +160,7 @@ VividXP.WordWrap.WordWrapStyle = String(
         }
     };
 
-    /*:
+    /*
      * processOverflow
      * Used only for processing normal characters. Check if word wrapping needs
      * to occur and does it. Depending on WordWrapStyle setting, we either wrap
@@ -173,8 +170,8 @@ VividXP.WordWrap.WordWrapStyle = String(
     Window_Message.prototype.processOverflow = function(textState) {
         const maxWindowWidth = this.contents.width;
         let w;
-        switch (VividXP.WordWrap.WordWrapStyle) {
-            case 'break-word':
+        switch (WordWrap.WordWrapStyle) {
+            case 'break-word': {
                 const lastBoundaryIndex = textState.wordBoundaries[textState.wordBoundaries.length - 1];
                 let boundaryStartIndex = textState.wordBoundaries.lastIndexOf(textState.index);
                 if (boundaryStartIndex !== -1) {
@@ -192,20 +189,24 @@ VividXP.WordWrap.WordWrapStyle = String(
                     }
                 }
                 break;
+            }
 
-            case 'break-all':
+            case 'break-all': {
+                break;
+            }
 
-            default:
+            default: {
                 const c = textState.text[textState.index];
                 w = this.textWidth(c);
                 if (textState.x >= maxWindowWidth || textState.x + (w * 2) >= maxWindowWidth) {
                     this.wrapToNewLine(textState);
                 }
                 break;
+            }
         }
     };
 
-    /*:
+    /*
      * wrapToNewLine
      * Wraps content to new line. If doing so pushes the rest of the message
      * off current page, then we pause and wait for user input to continue

@@ -12,13 +12,13 @@
  * This plugin provides a command to show text as a picture.
  *
  * Use it in the following procedure.
- *   1. Call the plugin command "Set Text Picture".
- *   2. Execute "Show Picture" without specifying an image.
+ *   1. Call the plugin command 'Set Text Picture'.
+ *   2. Execute 'Show Picture' without specifying an image.
  *
  * @command set
  * @text Set Text Picture
  * @desc Sets text to display as a picture.
- *       After this, execute "Show Picture" without specifying an image.
+ *       After this, execute 'Show Picture' without specifying an image.
  *
  * @arg text
  * @type multiline_string
@@ -53,20 +53,20 @@
  */
 
 (() => {
-    const pluginName = "TextPicture";
-    let textPictureText = "";
+    const pluginName = 'TextPicture';
+    let textPictureText = '';
 
-    PluginManager.registerCommand(pluginName, "set", args => {
+    PluginManager.registerCommand(pluginName, 'set', args => {
         textPictureText = String(args.text);
     });
 
     const _Game_Picture_show = Game_Picture.prototype.show;
     Game_Picture.prototype.show = function() {
         _Game_Picture_show.apply(this, arguments);
-        if (this._name === "" && textPictureText) {
+        if (this._name === '' && textPictureText) {
             this.mzkp_text = textPictureText;
             this.mzkp_textChanged = true;
-            textPictureText = "";
+            textPictureText = '';
         }
     };
 
@@ -79,9 +79,9 @@
     const _Sprite_Picture_updateBitmap = Sprite_Picture.prototype.updateBitmap;
     Sprite_Picture.prototype.updateBitmap = function() {
         _Sprite_Picture_updateBitmap.apply(this, arguments);
-        if (this.visible && this._pictureName === "") {
+        if (this.visible && this._pictureName === '') {
             const picture = this.picture();
-            const text = picture ? picture.mzkp_text || "" : "";
+            const text = picture ? picture.mzkp_text || '' : '';
             const textChanged = picture && picture.mzkp_textChanged;
             if (this.mzkp_text !== text || textChanged) {
                 this.mzkp_text = text;
@@ -90,7 +90,7 @@
                 picture.mzkp_textChanged = false;
             }
         } else {
-            this.mzkp_text = "";
+            this.mzkp_text = '';
         }
     };
 
