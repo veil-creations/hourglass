@@ -25,41 +25,41 @@ Hourglass.Threat = Hourglass.Threat || {};
     // Game_Actor
     //=========================================================================
     Hourglass.Threat.initMembers = Game_Actor.prototype.initMembers;
-    Game_Actor.prototype.initMembers = () => {
+    Game_Actor.prototype.initMembers = function() {
         Hourglass.Threat.initMembers.call(this);
         this._threat = 0;
     };
 
     Hourglass.Threat.setup = Game_Actor.prototype.setup;
-    Game_Actor.prototype.setup = actorId => {
+    Game_Actor.prototype.setup = function(actorId) {
         Hourglass.Threat.setup.call(this, actorId);
         const actor = this.actor();
         //TODO: additional calculation needed for balance
         this._threat = this._level * 100 * this.tgr;
     };
 
-    Game_Actor.prototype.threat = () => {
+    Game_Actor.prototype.threat = function() {
         return this._threat;
     };
 
-    Game_Actor.prototype.addThreat = value => {
+    Game_Actor.prototype.addThreat = function(value) {
         if (this.threatPercentage() < 99) {
             this._threat += (Math.abs(value) * this.tgr);
         }
     };
 
-    Game_Actor.prototype.removeThreat = value => {
+    Game_Actor.prototype.removeThreat = function(value) {
         this._threat -= Math.abs(value) / this.tgr;
         if (this._threat < 0) {
             this._threat = 0;
         }
     };
 
-    Game_Actor.prototype.addDefaultThreat = value => {
+    Game_Actor.prototype.addDefaultThreat = function() {
         this.addThreat(this._level * 50);
     };
 
-    Game_Actor.prototype.threatPercentage = value => {
+    Game_Actor.prototype.threatPercentage = function() {
         return Math.round((this.threat() / this.friendsUnit().threatSum()) * 100);
     };
 
@@ -67,7 +67,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     // Game_Action
     //=========================================================================
     Hourglass.Threat.executeDamage = Game_Action.prototype.executeDamage;
-    Game_Action.prototype.executeDamage = (target, value) => {
+    Game_Action.prototype.executeDamage = function(target, value) {
         Hourglass.Threat.executeDamage.call(this, target, value);
         if (this.isSkill()) {
             //TODO: this.value += this.item().get threat value from note tags
@@ -78,7 +78,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     };
 
     Hourglass.Threat.itemEffectRecoverHp = Game_Action.prototype.itemEffectRecoverHp;
-    Game_Action.prototype.itemEffectRecoverHp = (target, effect) => {
+    Game_Action.prototype.itemEffectRecoverHp = function(target, effect) {
         Hourglass.Threat.itemEffectRecoverHp.call(this, target, effect);
         let value = (target.mhp * effect.value1 + effect.value2);
         if (this.isItem()) {
@@ -91,7 +91,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     };
 
     Hourglass.Threat.itemEffectAddNormalState = Game_Action.prototype.itemEffectAddNormalState;
-    Game_Action.prototype.itemEffectAddNormalState = (target, effect) => {
+    Game_Action.prototype.itemEffectAddNormalState = function(target, effect) {
         Hourglass.Threat.itemEffectAddNormalState.call(this, target, effect);
         if (this.subject().isActor() && !this.isGuard() && this.target.result().success === true) {
             if (this.item().threat) {
@@ -103,7 +103,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     };
 
     Hourglass.Threat.apply = Game_Action.prototype.apply;
-    Game_Action.prototype.apply = target => {
+    Game_Action.prototype.apply = function(target) {
         Hourglass.Threat.apply.call(this, target);
         const result = target.result();
         if (result.evaded === true && target.isActor()) {
@@ -115,17 +115,17 @@ Hourglass.Threat = Hourglass.Threat || {};
     //=========================================================================
     // Game_Party
     //=========================================================================
-    Game_Party.prototype.threatSum = () => {
+    Game_Party.prototype.threatSum = function() {
         return this.aliveMembers().reduce((r, member) => {
             return r + member.threat();
         }, 0);
     };
 
     //TODO: seperate random friendly unit from random enemy. (Heal random ally shouldnt take threat into account)
-    Game_Party.prototype.randomTarget = () => {
+    Game_Party.prototype.randomTarget = function() {
         let threatRand = Math.random() * this.threatSum();
         let target = null;
-        this.aliveMembers().forEach((member) => {
+        this.aliveMembers().forEach(member => {
             threatRand -= member.threat();
             if (threatRand <= 0 && !target) {
                 target = member;
@@ -137,14 +137,14 @@ Hourglass.Threat = Hourglass.Threat || {};
     //=========================================================================
     // Window_Base
     //=========================================================================
-    Window_Base.prototype.drawActorThreat = (actor, x, y, width) => {
+    Window_Base.prototype.drawActorThreat = function(actor, x, y, width) {
         width = width || 168;
         this.changeTextColor(this.threatColor(actor.threatPercentage()));
         this.drawText(actor.threatPercentage()+'%', x, y, width);
     };
 
-    Window_Base.prototype.threatColor = threat => {
-        if (threat >=75) {
+    Window_Base.prototype.threatColor = function(threat) {
+        if (threat >= 75) {
             return this.crisisColor();
         } else {
             return this.normalColor();
@@ -155,7 +155,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     // Window_BattleStatus
     //=========================================================================
     Hourglass.Threat.drawBasicArea = Window_BattleStatus.prototype.drawBasicArea;
-    Window_BattleStatus.prototype.drawBasicArea = (rect, actor) => {
+    Window_BattleStatus.prototype.drawBasicArea = function(rect, actor) {
         Hourglass.Threat.drawBasicArea.call(this, rect, actor);
         this.drawActorThreat(actor, rect.x + 156, rect.y, rect.width - 156);
     };
