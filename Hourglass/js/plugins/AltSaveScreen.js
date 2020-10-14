@@ -62,8 +62,7 @@
         return this.lineHeight() * 2 + 16;
     };
 
-    const _Window_SavefileList_callUpdateHelp =
-        Window_SavefileList.prototype.callUpdateHelp;
+    const _Window_SavefileList_callUpdateHelp = Window_SavefileList.prototype.callUpdateHelp;
     Window_SavefileList.prototype.callUpdateHelp = function() {
         _Window_SavefileList_callUpdateHelp.apply(this, arguments);
         if (this.active && this.mzkp_statusWindow) {
@@ -103,7 +102,7 @@
         if (savefileId === 0) {
             this.drawText(TextManager.autosave, x, y, 180);
         } else {
-            this.drawText(TextManager.file + " " + savefileId, x, y, 180);
+            this.drawText(`${TextManager.file} ${savefileId}`, x, y, 180);
         }
     };
 
@@ -112,7 +111,7 @@
         const playtimeY = bottom - this.lineHeight();
         this.drawText(info.title, rect.x + 192, rect.y, rect.width - 192);
         this.drawPartyfaces(info.faces, rect.x, bottom - 144);
-        this.drawText(info.playtime, rect.x, playtimeY, rect.width, "right");
+        this.drawText(info.playtime, rect.x, playtimeY, rect.width, 'right');
     };
 
     Window_SavefileStatus.prototype.drawPartyfaces = function(faces, x, y) {

@@ -1,10 +1,10 @@
 //=============================================================================
 // RPG Maker MZ - Hourglass Threat System
 //=============================================================================
-const Imported = Imported || {};
+const Imported = {};
 Imported['Hourglass - Threat'] = '1.0';
 
-const Hourglass = Hourglass || {};
+const Hourglass = {};
 Hourglass.Threat = Hourglass.Threat || {};
 
 /*:
@@ -13,10 +13,10 @@ Hourglass.Threat = Hourglass.Threat || {};
  * @author Christian Roach
  *
  * @help HourglassThreat.js
- * 
+ *
  * This plugin enables certain players and actions to generate different
  * levels of threat during combat.
- * 
+ *
  * It does not provide plugin commands.
  */
 
@@ -116,12 +116,11 @@ Hourglass.Threat = Hourglass.Threat || {};
     // Game_Party
     //=========================================================================
     Game_Party.prototype.threatSum = function() {
-        return this.aliveMembers().reduce((r, member) => {
-            return r + member.threat();
-        }, 0);
+        return this.aliveMembers().reduce((r, member) => (r + member.threat()), 0);
     };
 
-    //TODO: seperate random friendly unit from random enemy. (Heal random ally shouldnt take threat into account)
+    // TODO: seperate random friendly unit from random enemy. (Heal random ally
+    // shouldnt take threat into account)
     Game_Party.prototype.randomTarget = function() {
         let threatRand = Math.random() * this.threatSum();
         let target = null;
@@ -137,18 +136,16 @@ Hourglass.Threat = Hourglass.Threat || {};
     //=========================================================================
     // Window_Base
     //=========================================================================
-    Window_Base.prototype.drawActorThreat = function(actor, x, y, width) {
-        width = width || 168;
+    Window_Base.prototype.drawActorThreat = function(actor, x, y, width = 168) {
         this.changeTextColor(this.threatColor(actor.threatPercentage()));
-        this.drawText(actor.threatPercentage()+'%', x, y, width);
+        this.drawText(`${actor.threatPercentage()}%`, x, y, width);
     };
 
     Window_Base.prototype.threatColor = function(threat) {
         if (threat >= 75) {
             return this.crisisColor();
-        } else {
-            return this.normalColor();
         }
+        return this.normalColor();
     };
 
     //=========================================================================
