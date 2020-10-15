@@ -19,6 +19,7 @@
         }],
         "linebreak-style": 0,
         "max-len": 0,
+        "no-cond-assign": ["error", "except-parens"],
         "no-param-reassign": ["error", {
             "props": false
         }],
