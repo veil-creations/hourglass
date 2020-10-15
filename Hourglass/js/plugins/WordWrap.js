@@ -69,8 +69,8 @@ WordWrap.WordWrapStyle = String(
     Window_Message.prototype.getWordBoundaries = function(textStateText) {
         let result = [];
         const wordRegex = /\b[\S]+\b\S*/gm;
-        const wordBoundaryArr = wordRegex.exec(textStateText);
-        while (wordBoundaryArr !== null) {
+        let wordBoundaryArr = [];
+        while ((wordBoundaryArr = wordRegex.exec(textStateText)) !== null) {
             result.push(wordBoundaryArr);
         }
         result = result.map(match => (match.index));
