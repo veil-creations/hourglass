@@ -121,9 +121,8 @@ WordWrap.WordWrapStyle = String(
             this.flushTextState(textState);
             this.processControlCharacter(textState, c);
         } else {
-            let isOverflow = this.processOverflow(textState);
+            const isOverflow = this.processOverflow(textState);
             if (!this.needsNewPage(textState) && !(isOverflow && c.charCodeAt(0) === 0x20)) {
-                console.log(textState.buffer);
                 textState.buffer += c;
             }
         }
