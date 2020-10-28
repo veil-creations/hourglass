@@ -121,8 +121,9 @@ WordWrap.WordWrapStyle = String(
             this.flushTextState(textState);
             this.processControlCharacter(textState, c);
         } else {
-            this.processOverflow(textState);
-            if (!this.needsNewPage(textState)) {
+            let isOverflow = this.processOverflow(textState);
+            if (!this.needsNewPage(textState) && !(isOverflow && c.charCodeAt(0) === 0x20)) {
+                console.log(textState.buffer);
                 textState.buffer += c;
             }
         }
@@ -170,6 +171,7 @@ WordWrap.WordWrapStyle = String(
     Window_Message.prototype.processOverflow = function(textState) {
         const maxWindowWidth = this.contents.width;
         let w;
+        let isOverflow = false;
         switch (WordWrap.WordWrapStyle) {
             case 'break-word': {
                 const lastBoundaryIndex = textState.wordBoundaries[textState.wordBoundaries.length - 1];
@@ -185,6 +187,7 @@ WordWrap.WordWrapStyle = String(
                     const word = textState.text.substring(boundaryStartIndex, boundaryEndIndex);
                     w = this.textWidth(word);
                     if (textState.x >= maxWindowWidth || textState.x + w >= maxWindowWidth) {
+                        isOverflow = true;
                         this.wrapToNewLine(textState);
                     }
                 }
@@ -199,11 +202,13 @@ WordWrap.WordWrapStyle = String(
                 const c = textState.text[textState.index];
                 w = this.textWidth(c);
                 if (textState.x >= maxWindowWidth || textState.x + (w * 2) >= maxWindowWidth) {
+                    isOverflow = true;
                     this.wrapToNewLine(textState);
                 }
                 break;
             }
         }
+        return isOverflow;
     };
 
     /*
