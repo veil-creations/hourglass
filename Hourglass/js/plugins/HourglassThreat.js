@@ -53,6 +53,7 @@ Hourglass.Threat = Hourglass.Threat || {};
         this._threat -= Math.abs(value) / this.tgr;
         if (this._threat < 0) {
             this._threat = 0;
+            $gameTemp.requestBattleRefresh();
         }
     };
 
