@@ -45,6 +45,7 @@ Hourglass.Threat = Hourglass.Threat || {};
     Game_Actor.prototype.addThreat = function(value) {
         if (this.threatPercentage() < 99) {
             this._threat += (Math.abs(value) * this.tgr);
+            $gameTemp.requestBattleRefresh();
         }
     };
 
@@ -138,22 +139,22 @@ Hourglass.Threat = Hourglass.Threat || {};
     //=========================================================================
     Window_Base.prototype.drawActorThreat = function(actor, x, y, width = 168) {
         this.changeTextColor(this.threatColor(actor.threatPercentage()));
-        this.drawText(`${actor.threatPercentage()}%`, x, y, width);
+        this.drawText(`${actor.threatPercentage()}%`, x, y - 137, width);
     };
 
     Window_Base.prototype.threatColor = function(threat) {
         if (threat >= 75) {
-            return this.crisisColor();
+            return ColorManager.crisisColor();
         }
-        return this.normalColor();
+        return ColorManager.normalColor();
     };
 
     //=========================================================================
     // Window_BattleStatus
     //=========================================================================
-    Hourglass.Threat.drawBasicArea = Window_BattleStatus.prototype.drawBasicArea;
-    Window_BattleStatus.prototype.drawBasicArea = function(rect, actor) {
-        Hourglass.Threat.drawBasicArea.call(this, rect, actor);
-        this.drawActorThreat(actor, rect.x + 156, rect.y, rect.width - 156);
+    Hourglass.Threat.placeBasicGauges = Window_BattleStatus.prototype.placeBasicGauges;
+    Window_BattleStatus.prototype.placeBasicGauges = function(actor, x, y) {
+        Hourglass.Threat.placeBasicGauges.call(this, actor, x, y);
+        this.drawActorThreat(actor, x, y);
     };
 })();
